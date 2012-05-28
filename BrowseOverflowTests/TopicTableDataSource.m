@@ -17,6 +17,7 @@ NSString *topicCellReuseIdentifier = @"Topic";
 
 @end
 
+// このクラスいわゆるモデルマーネジャとして動いてるのかなー
 @implementation TopicTableDataSource
 {
     NSArray *topics;
@@ -47,6 +48,7 @@ NSString *topicCellReuseIdentifier = @"Topic";
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    // コントローラー間の通信はnotification
     NSNotification *note = [NSNotification notificationWithName: TopicTableDidSelectTopicNotification object: [self topicForIndexPath: indexPath]];
     [[NSNotificationCenter defaultCenter] postNotification: note];
 }

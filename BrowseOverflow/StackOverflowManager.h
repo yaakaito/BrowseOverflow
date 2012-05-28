@@ -6,6 +6,8 @@
 //  Copyright 2011 Fuzzy Aliens Ltd. All rights reserved.
 //
 
+// アプリケーション全体を管理してるコントローラーだろうか
+
 #import <Foundation/Foundation.h>
 #import "StackOverflowManagerDelegate.h"
 #import "StackOverflowCommunicatorDelegate.h"

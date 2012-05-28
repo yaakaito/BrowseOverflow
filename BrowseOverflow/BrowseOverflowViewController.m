@@ -44,6 +44,8 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    // # datasourceはそれぞれ別々で管理されてる
+    // - TopicTableDataSourceとか
     self.tableView.delegate = self.dataSource;
     self.tableView.dataSource = self.dataSource;
     objc_property_t tableViewProperty = class_getProperty([dataSource class], "tableView");
@@ -67,11 +69,10 @@
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear: animated];
-    [[NSNotificationCenter defaultCenter]
-     addObserver: self 
-     selector: @selector(userDidSelectTopicNotification:)
-     name: TopicTableDidSelectTopicNotification
-     object: nil];
+    [[NSNotificationCenter defaultCenter] addObserver: self 
+                                             selector: @selector(userDidSelectTopicNotification:)
+                                                 name: TopicTableDidSelectTopicNotification
+                                               object: nil];
     if ([self.dataSource isKindOfClass: [QuestionListTableDataSource class]]) {
         ((QuestionListTableDataSource *)dataSource).notificationCenter = [NSNotificationCenter defaultCenter];
     }

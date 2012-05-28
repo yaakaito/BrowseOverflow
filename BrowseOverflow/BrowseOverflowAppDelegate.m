@@ -25,6 +25,7 @@
 @synthesize navigationController=_navigationController;
 
 - (NSArray *)topics {
+    // 固定なのかー
     NSString *tags[] = { @"iphone", @"cocoa-touch", @"uikit", @"objective-c", @"xcode" };
     NSString *names[] = { @"iPhone", @"Cocoa Touch", @"UIKit", @"Objective-C", @"Xcode" };
     NSMutableArray *topicList = [NSMutableArray array];
@@ -37,8 +38,12 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    // ほほう
+    
     BrowseOverflowViewController *firstViewController = [[BrowseOverflowViewController alloc] initWithNibName: nil bundle: nil];
     firstViewController.objectConfiguration = [[BrowseOverflowObjectConfiguration alloc] init];
+    
+    // トピックスのデータソースセットしてるなー 
     TopicTableDataSource *dataSource = [[TopicTableDataSource alloc] init];
     [dataSource setTopics: [self topics]];
     firstViewController.dataSource = dataSource;
