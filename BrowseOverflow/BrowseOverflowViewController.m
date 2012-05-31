@@ -123,6 +123,10 @@
 
 - (void)userDidSelectQuestionNotification: (NSNotification *)note {
     Question *selectedQuestion = (Question *)[note object];
+    // おなじviewcontroller使ってる
+    // 同じような処理だったらviewcontroller使い回すのがいいんかなぁ
+    // 多分、僕が作るようなアプリはviewcontrollerを1ビューにつき一つ持ってる理由としては、datasourceが統合されてるからかなぁ
+    // datasourceだけ外に出すのは確かに合理的だなぁ
     BrowseOverflowViewController *nextViewController = [[BrowseOverflowViewController alloc] init];
     QuestionDetailDataSource *detailDataSource = [[QuestionDetailDataSource alloc] init];
     detailDataSource.question = selectedQuestion;
