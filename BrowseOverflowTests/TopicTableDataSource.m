@@ -37,6 +37,7 @@ NSString *topicCellReuseIdentifier = @"Topic";
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    // 実際使うときはこのあたりもマネージャーにやってもらう方がいいかなぁ
     NSParameterAssert([indexPath section] == 0);
     NSParameterAssert([indexPath row] < [topics count]);
     UITableViewCell *topicCell = [tableView dequeueReusableCellWithIdentifier: topicCellReuseIdentifier];

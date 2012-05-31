@@ -10,6 +10,7 @@
 #import "TopicTableDataSource.h"
 #import "Topic.h"
 
+// こっちのテスト自体はそんな大変じゃなさそうかなー
 @implementation TopicTableDataSourceTests
 {
     TopicTableDataSource *dataSource;
@@ -55,6 +56,7 @@
 }
 
 - (void)testCellCreatedByDataSourceContainsTopicTitleAsTextLabel {
+    // この辺のテストをGHUnitのviewTestにまかしてしまうと楽そう
     NSIndexPath *firstTopic = [NSIndexPath indexPathForRow: 0 inSection: 0];
     UITableViewCell *firstCell = [dataSource tableView: nil cellForRowAtIndexPath: firstTopic];
     NSString *cellTitle = firstCell.textLabel.text;
