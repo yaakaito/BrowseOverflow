@@ -72,6 +72,7 @@ static const char *viewWillAppearKey = "BrowseOverflowViewControllerTestsViewWil
     Question *question;
 }
 
+// グアァ
 + (void)swapInstanceMethodsForClass: (Class) cls selector: (SEL)sel1 andSelector: (SEL)sel2 {
     Method method1 = class_getInstanceMethod(cls, sel1);
     Method method2 = class_getInstanceMethod(cls, sel2);
