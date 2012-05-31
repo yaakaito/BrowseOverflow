@@ -70,6 +70,7 @@
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear: animated];
+    // notificationでコントローラー間の通信やると、やっぱ混雑する感はある
     [[NSNotificationCenter defaultCenter] addObserver: self 
                                              selector: @selector(userDidSelectTopicNotification:)
                                                  name: TopicTableDidSelectTopicNotification
@@ -94,6 +95,8 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear: animated];
+    // ViewController統一することでやっぱこの辺のコード書かなきゃいけなくなるのはちょっとやだなぁ
+    // そう考えると分割した方が良い気がするけど、同じようなテストが乱立することになっちゃうのもやだし悩みどころ
     self.manager = [objectConfiguration stackOverflowManager];
     self.manager.delegate = self;
     if ([self.dataSource isKindOfClass: [QuestionListTableDataSource class]]) {
@@ -113,6 +116,7 @@
 
 - (void)userDidSelectTopicNotification: (NSNotification *)note {
     Topic * selectedTopic = (Topic *)[note object];
+    // 下に同じ
     BrowseOverflowViewController *nextViewController = [[BrowseOverflowViewController alloc] init];
     QuestionListTableDataSource *questionsDataSource = [[QuestionListTableDataSource alloc] init];
     questionsDataSource.topic = selectedTopic;
