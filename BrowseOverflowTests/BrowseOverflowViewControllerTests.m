@@ -72,6 +72,11 @@ static const char *viewWillAppearKey = "BrowseOverflowViewControllerTestsViewWil
     Question *question;
 }
 
+/**
+ なんだかんだでModelとそのManagerのテスト固めるのが最適解っぽい気がするし、GHUnitの機能とかうまい事つかうところくらいやるのが現実的かなぁ
+ 黄色本とか読み直して、もう一回アプリ全体の設計見直そう
+ */
+
 // グアァ
 + (void)swapInstanceMethodsForClass: (Class) cls selector: (SEL)sel1 andSelector: (SEL)sel2 {
     Method method1 = class_getInstanceMethod(cls, sel1);
