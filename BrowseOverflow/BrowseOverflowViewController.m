@@ -44,6 +44,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    // 難しいことしてないので同じviewcontroller使い回している
     // # datasourceはそれぞれ別々で管理されてる
     // - TopicTableDataSourceとか
     self.tableView.delegate = self.dataSource;
