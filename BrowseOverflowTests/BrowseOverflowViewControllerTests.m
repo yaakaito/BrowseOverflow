@@ -87,6 +87,10 @@ static const char *viewWillAppearKey = "BrowseOverflowViewControllerTestsViewWil
     viewController.dataSource = dataSource;    
     objc_removeAssociatedObjects(viewController);
 
+    
+    // この辺の処理、OCMock使う事でうまくできないかなー
+    // 呼び出された事チェックとかするなら、andCall:とかでいけそうな感じがするけど
+    // たぶん swapがinstanceMethod <=> instanceMethod だから、大丈夫な気がする
     realViewDidAppear = @selector(viewDidAppear:);
     testViewDidAppear = @selector(browseOverflowViewControllerTests_viewDidAppear:);
     [BrowseOverflowViewControllerTests swapInstanceMethodsForClass: [UIViewController class] selector: realViewDidAppear andSelector: testViewDidAppear];
