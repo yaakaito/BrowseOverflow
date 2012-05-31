@@ -162,6 +162,7 @@
 }
 
 - (void)answersReceivedForQuestion:(Question *)question {
+    // 簡易アプリなのでまあ仕方ないけど、実際のアプリ作るとこんなにシンプルにはいかないだろうなぁ
     [tableView reloadData];
 }
 
