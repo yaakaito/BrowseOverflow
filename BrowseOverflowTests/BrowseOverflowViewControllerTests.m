@@ -96,6 +96,11 @@ static const char *viewWillAppearKey = "BrowseOverflowViewControllerTestsViewWil
     // この辺の処理、OCMock使う事でうまくできないかなー
     // 呼び出された事チェックとかするなら、andCall:とかでいけそうな感じがするけど
     // たぶん swapがinstanceMethod <=> instanceMethod だから、大丈夫な気がする
+    
+    // このへんでnotificationとか消えるのかー
+    // objc_setAssociatedObjectしてるからなんかしら実行したときのキーでも監視するんだろうか
+
+    // おやが呼ばれているかのためのテストなのでGHUnitだとsetUpClassでよさそうだなー
     realViewDidAppear = @selector(viewDidAppear:);
     testViewDidAppear = @selector(browseOverflowViewControllerTests_viewDidAppear:);
     [BrowseOverflowViewControllerTests swapInstanceMethodsForClass: [UIViewController class] selector: realViewDidAppear andSelector: testViewDidAppear];
@@ -107,6 +112,7 @@ static const char *viewWillAppearKey = "BrowseOverflowViewControllerTestsViewWil
     realViewWillAppear = @selector(viewWillAppear:);
     testViewWillAppear = @selector(browseOverflowViewControllerTests_viewWillAppear:);
     [BrowseOverflowViewControllerTests swapInstanceMethodsForClass: [UIViewController class] selector: realViewWillAppear andSelector: testViewWillAppear];
+    // こんへんまでおやがよばれるかのテスト
     
     realUserDidSelectTopic = @selector(userDidSelectTopicNotification:);
     testUserDidSelectTopic = @selector(browseOverflowControllerTests_userDidSelectTopicNotification:);
@@ -141,26 +147,31 @@ static const char *viewWillAppearKey = "BrowseOverflowViewControllerTestsViewWil
 }
 
 - (void)testViewControllerHasATableViewProperty {
+    // tableViewがviewControllerにちゃんとくっついてるかテストしてる
     objc_property_t tableViewProperty = class_getProperty([viewController class], "tableView");
     STAssertTrue(tableViewProperty != NULL, @"BrowseOverflowViewController needs a table view");
 }
 
 - (void)testViewControllerHasADataSourceProperty {
+    // datasrouceが(ry
     objc_property_t dataSourceProperty = class_getProperty([viewController class], "dataSource");
     STAssertTrue(dataSourceProperty != NULL, @"View Controller needs a data source");
 }
 
 - (void)testViewControllerConnectsDataSourceInViewDidLoad {
+    // viewDidLoadするとdataSourceがちゃんとつくよ、というテスト
     [viewController viewDidLoad];
     STAssertEqualObjects([tableView dataSource], dataSource, @"View controller should have set the table view's data source");
 }
 
 - (void)testViewControllerConnectsDelegateInViewDidLoad {
+    // viewDidLoadするとdelegateがちゃんとつくよ、というテスト
     [viewController viewDidLoad];
     STAssertEqualObjects([tableView delegate], dataSource, @"View controller should have set the table view's delegate");
 }
 
 - (void)testViewControllerConnectsTableViewBacklinkInViewDidLoad {
+    // datasource変わったら、viewDidLoad後もちゃんと変わるよ
     QuestionListTableDataSource *questionDataSource = [[QuestionListTableDataSource alloc] init];
     viewController.dataSource = questionDataSource;
     [viewController viewDidLoad];
@@ -168,6 +179,7 @@ static const char *viewWillAppearKey = "BrowseOverflowViewControllerTestsViewWil
 }
 
 - (void)testViewControllerHooksUpQuestionListNotificationCenterInViewDidAppear {
+    // QuestionListなのでnotificationを登録してね、というテスト
     QuestionListTableDataSource *questionDataSource = [[QuestionListTableDataSource alloc] init];
     viewController.dataSource = questionDataSource;
     [viewController viewDidAppear: YES];
@@ -175,6 +187,8 @@ static const char *viewWillAppearKey = "BrowseOverflowViewControllerTestsViewWil
 }
 
 - (void)testDefaultStateOfViewControllerDoesNotReceiveTopicSelectionNotifications {
+    // notificationが飛んだら、ちゃんnotificationが飛んでくるかのテスト
+    // このへんはmethod_excanhgeじゃないとできないなー
     [BrowseOverflowViewControllerTests swapInstanceMethodsForClass: [BrowseOverflowViewController class] selector: realUserDidSelectTopic andSelector: testUserDidSelectTopic];
     [[NSNotificationCenter defaultCenter] 
      postNotificationName: TopicTableDidSelectTopicNotification
@@ -185,6 +199,7 @@ static const char *viewWillAppearKey = "BrowseOverflowViewControllerTestsViewWil
 }
 
 - (void)testViewControllerReceivesTopicSelectionNotificationAfterViewDidAppear {
+    // こっちも似たような感じ
     [BrowseOverflowViewControllerTests swapInstanceMethodsForClass: [BrowseOverflowViewController class] selector: realUserDidSelectTopic andSelector: testUserDidSelectTopic];
     [viewController viewDidAppear: NO];
     [[NSNotificationCenter defaultCenter] 
@@ -196,6 +211,7 @@ static const char *viewWillAppearKey = "BrowseOverflowViewControllerTestsViewWil
 }
 
 - (void)testViewControllerDoesNotReceiveTopicSelectNotificationAfterViewWillDisappear {
+    // notification系、method-exchangeして、asssiatedObject使うのがいいのかなー
     [BrowseOverflowViewControllerTests swapInstanceMethodsForClass: [BrowseOverflowViewController class] selector: realUserDidSelectTopic andSelector: testUserDidSelectTopic];
     [viewController viewDidAppear: NO];
     [viewController viewWillDisappear: NO];
@@ -208,16 +224,19 @@ static const char *viewWillAppearKey = "BrowseOverflowViewControllerTestsViewWil
 }
 
 - (void)testViewControllerCallsSuperViewDidAppear {
+    // super(UITableView)のviewDidApper忘れずに読んでるか
     [viewController viewDidAppear: NO];
     STAssertNotNil(objc_getAssociatedObject(viewController, viewDidAppearKey), @"-viewDidAppear: should call through to superclass implementation");
 }
 
 - (void)testViewControllerCallsSuperViewWillDisappear {
+    // super(UITableView)のviewWillDisapper忘れずに読んでるか
     [viewController viewWillDisappear: NO];
     STAssertNotNil(objc_getAssociatedObject(viewController, viewWillDisappearKey), @"-viewWillDisappear: should call through to superclass implementation");
 }
 
 - (void)testSelectingTopicPushesNewViewController {
+    // ビューのpushに成功しているかのテスト
     [viewController userDidSelectTopicNotification: nil];
     UIViewController *currentTopVC = navController.topViewController;
     STAssertFalse([currentTopVC isEqual: viewController], @"New view controller should be pushed onto the stack");
@@ -225,6 +244,7 @@ static const char *viewWillAppearKey = "BrowseOverflowViewControllerTestsViewWil
 }
 
 - (void)testNewViewControllerHasAQuestionListDataSourceForTheSelectedTopic {
+    // topic選択してpushされたビューがちゃんとQuestionのdataSourceになってるか、topicがあっているか、のテスト
     Topic *iPhoneTopic = [[Topic alloc] initWithName: @"iPhone" tag: @"iphone"];
     NSNotification *iPhoneTopicSelectedNotification = [NSNotification notificationWithName: TopicTableDidSelectTopicNotification object: iPhoneTopic];
     [viewController userDidSelectTopicNotification: iPhoneTopicSelectedNotification];
